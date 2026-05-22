@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vlogstix — Capture Every Moment</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --purple:#7F77DD;
+    --purple-dark:#534AB7;
+    --purple-darker:#3C3489;
+    --purple-light:#EEEDFE;
+    --purple-mid:#AFA9EC;
+    --white:#FFFFFF;
+    --black:#1a1a2e;
+    --black-light:#252540;
+    --grey:#9ca3af;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--black);color:var(--white);overflow-x:hidden}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(26,26,46,0.97);backdrop-filter:blur(8px);padding:0 6%;border-bottom:1px solid rgba(127,119,221,0.15)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .nav-logo{font-family:Georgia,serif;font-size:24px;font-weight:700;color:var(--white);letter-spacing:2px}
+  .nav-logo span{color:var(--purple)}
+  .nav-links{display:flex;gap:36px;list-style:none}
+  .nav-links a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s}
+  .nav-links a:hover{color:var(--purple)}
+  .nav-cta{background:var(--purple);color:var(--white);padding:10px 24px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:background 0.2s}
+  .nav-cta:hover{background:var(--purple-dark)}
+
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 6% 80px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;border:1px solid rgba(127,119,221,0.08);pointer-events:none}
+  .hero::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;border:1px solid rgba(127,119,221,0.12);pointer-events:none}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(127,119,221,0.1);border:1px solid rgba(127,119,221,0.3);border-radius:20px;padding:6px 16px;font-size:11px;letter-spacing:3px;color:var(--purple-mid);text-transform:uppercase;margin-bottom:32px}
+  .hero h1{font-family:Georgia,serif;font-size:clamp(42px,7vw,84px);font-weight:700;color:var(--white);line-height:1.05;max-width:900px;margin-bottom:28px}
+  .hero h1 em{color:var(--purple);font-style:normal}
+  .hero p{font-size:18px;color:rgba(255,255,255,0.55);max-width:560px;line-height:1.8;margin-bottom:50px}
+  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:80px}
+  .btn-primary{background:var(--purple);color:var(--white);padding:16px 40px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s}
+  .btn-primary:hover{background:var(--purple-dark);transform:translateY(-2px)}
+  .btn-outline{border:1px solid rgba(255,255,255,0.2);color:var(--white);padding:16px 40px;border-radius:4px;font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s}
+  .btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+  .hero-stats{display:flex;gap:60px;flex-wrap:wrap;justify-content:center}
+  .stat{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .stat-number{font-family:Georgia,serif;font-size:36px;font-weight:700;color:var(--purple)}
+  .stat-label{font-size:11px;letter-spacing:3px;color:rgba(255,255,255,0.4);text-transform:uppercase}
+
+  section{padding:100px 6%}
+  .section-label{font-size:10px;letter-spacing:5px;color:var(--purple);text-transform:uppercase;margin-bottom:16px}
+  .section-title{font-family:Georgia,serif;font-size:clamp(28px,4vw,48px);font-weight:700;color:var(--white);line-height:1.2;margin-bottom:20px}
+  .section-sub{font-size:16px;color:var(--grey);max-width:560px;line-height:1.8}
+
+  .products{background:var(--black-light)}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;margin-top:64px}
+  .product-card{background:var(--black);padding:48px 40px;border-bottom:3px solid transparent;transition:all 0.3s}
+  .product-card:hover{border-bottom-color:var(--purple);transform:translateY(-4px)}
+  .product-card.featured{background:#1e1c3a;border-bottom:3px solid var(--purple)}
+  .product-badge{display:inline-block;background:var(--purple);color:var(--white);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:2px;margin-bottom:24px}
+  .product-icon{width:64px;height:64px;background:rgba(127,119,221,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+  .product-icon svg{width:32px;height:32px;stroke:var(--purple);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .product-card h3{font-family:Georgia,serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:8px}
+  .product-type{font-size:13px;color:var(--purple);letter-spacing:2px;margin-bottom:16px}
+  .product-card p{font-size:14px;color:var(--grey);line-height:1.8;margin-bottom:28px}
+  .product-specs{display:flex;flex-direction:column;gap:10px}
+  .spec{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.6)}
+  .spec-dot{width:6px;height:6px;background:var(--purple);border-radius:50%;flex-shrink:0}
+
+  .features{background:var(--black)}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;margin-top:64px}
+  .feature{border-left:2px solid var(--purple);padding-left:24px}
+  .feature h4{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px}
+  .feature p{font-size:14px;color:var(--grey);line-height:1.8}
+
+  .who{background:var(--black-light)}
+  .who-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:64px}
+  .who-card{background:var(--black);border-radius:8px;padding:32px 24px;text-align:center;border-bottom:3px solid transparent;transition:all 0.25s}
+  .who-card:hover{border-bottom-color:var(--purple);transform:translateY(-4px)}
+  .who-icon{font-size:36px;margin-bottom:16px}
+  .who-card h4{font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px}
+  .who-card p{font-size:13px;color:var(--grey);line-height:1.7}
+
+  .contact{background:var(--black)}
+  .contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .contact-form{display:flex;flex-direction:column;gap:16px}
+  .contact-form input,.contact-form textarea,.contact-form select{width:100%;padding:14px 18px;border:1px solid rgba(127,119,221,0.15);border-radius:6px;font-size:14px;font-family:inherit;background:var(--black-light);color:var(--white);outline:none;transition:border 0.2s}
+  .contact-form input:focus,.contact-form textarea:focus,.contact-form select:focus{border-color:var(--purple)}
+  .contact-form input::placeholder,.contact-form textarea::placeholder{color:rgba(255,255,255,0.3)}
+  .contact-form textarea{height:120px;resize:vertical}
+  .contact-form button{background:var(--purple);color:var(--white);padding:16px;border:none;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background 0.2s}
+  .contact-form button:hover{background:var(--purple-dark)}
+  .contact-info{display:flex;flex-direction:column;gap:28px}
+  .contact-info-item{display:flex;gap:16px;align-items:flex-start}
+  .contact-info-icon{width:44px;height:44px;background:rgba(127,119,221,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(127,119,221,0.2)}
+  .contact-info-icon svg{width:18px;height:18px;stroke:var(--purple);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .contact-info-item h5{font-family:Georgia,serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+  .contact-info-item p{font-size:13px;color:var(--grey);line-height:1.7}
+
+  footer{background:#111124;padding:48px 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;border-top:1px solid rgba(127,119,221,0.1)}
+  .footer-logo{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--white);letter-spacing:2px}
+  .footer-logo span{color:var(--purple)}
+  .footer-copy{font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px}
+  .footer-tagline{font-family:Georgia,serif;font-size:11px;color:var(--purple);letter-spacing:3px;opacity:0.7}
+
+  @media(max-width:768px){
+    .nav-links{display:none}
+    .contact-inner{grid-template-columns:1fr}
+    .hero-stats{gap:30px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Vlog<span>stix</span></div>
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#who">Who we serve</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Shop now</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🎬 Premium Tripods — Belgium</div>
+  <h1>Capture Every<br/><em>Moment</em> Perfectly.</h1>
+  <p>Vlogstix tripods are engineered for creators, vloggers and photographers who refuse to compromise on stability, quality and style.</p>
+  <div class="hero-btns">
+    <a href="#products" class="btn-primary">View products</a>
+    <a href="#contact" class="btn-outline">Get a quote</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-number">360°</span>
+      <span class="stat-label">Rotation</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">CE</span>
+      <span class="stat-label">Certified</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">2KG</span>
+      <span class="stat-label">Max load</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">1YR</span>
+      <span class="stat-label">Warranty</span>
+    </div>
+  </div>
+</section>
+
+<section class="products" id="products">
+  <p class="section-label">Our products</p>
+  <h2 class="section-title">Built for creators.<br/>Loved by professionals.</h2>
+  <p class="section-sub">Premium tripods and camera accessories designed for every shooting style and budget.</p>
+  <div class="products-grid">
+    <div class="product-card featured">
+      <div class="product-badge">Best seller</div>
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><line x1="12" y1="11" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="8" y1="17" x2="12" y2="15"/><line x1="16" y1="17" x2="12" y2="15"/></svg>
+      </div>
+      <h3>Vlogstix Pro</h3>
+      <p class="product-type">Professional Tripod — Aluminium Alloy</p>
+      <p>Our flagship tripod built for serious content creators. Ultra-stable, lightweight aluminium construction with 360° panoramic rotation and smooth ball head.</p>
+      <div class="product-specs">
+        <div class="spec"><span class="spec-dot"></span>Aluminium alloy construction</div>
+        <div class="spec"><span class="spec-dot"></span>360° panoramic rotation</div>
+        <div class="spec"><span class="spec-dot"></span>Maximum load 2kg</div>
+        <div class="spec"><span class="spec-dot"></span>Adjustable height</div>
+        <div class="spec"><span class="spec-dot"></span>Universal phone and camera mount</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><line x1="12" y1="11" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="8" y1="17" x2="12" y2="15"/><line x1="16" y1="17" x2="12" y2="15"/></svg>
+      </div>
+      <h3>Vlogstix Mini</h3>
+      <p class="product-type">Compact Tripod — Travel Ready</p>
+      <p>The perfect travel companion for vloggers and content creators on the go. Compact, lightweight and folds down to fit in any bag.</p>
+      <div class="product-specs">
+        <div class="spec"><span class="spec-dot"></span>Ultra compact and lightweight</div>
+        <div class="spec"><span class="spec-dot"></span>Flexible legs — any surface</div>
+        <div class="spec"><span class="spec-dot"></span>360° rotation head</div>
+        <div class="spec"><span class="spec-dot"></span>Universal mount</div>
+        <div class="spec"><span class="spec-dot"></span>Perfect for travel</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+      </div>
+      <h3>Vlogstix Ring</h3>
+      <p class="product-type">Ring Light + Tripod Set</p>
+      <p>The ultimate content creation kit — professional ring light combined with our premium tripod stand. Perfect for beauty, lifestyle and professional video content.</p>
+      <div class="product-specs">
+        <div class="spec"><span class="spec-dot"></span>LED ring light included</div>
+        <div class="spec"><span class="spec-dot"></span>3 colour temperatures</div>
+        <div class="spec"><span class="spec-dot"></span>Phone and camera mount</div>
+        <div class="spec"><span class="spec-dot"></span>Adjustable brightness</div>
+        <div class="spec"><span class="spec-dot"></span>Complete creator kit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <p class="section-label">Why Vlogstix</p>
+  <h2 class="section-title">Designed for creators.<br/>Built to last.</h2>
+  <p class="section-sub">Every Vlogstix product is engineered with one goal — helping you create better content effortlessly.</p>
+  <div class="features-grid">
+    <div class="feature">
+      <h4>Premium materials</h4>
+      <p>Aluminium alloy, ABS and carbon fibre options — lightweight yet incredibly durable. Built to withstand daily professional use.</p>
+    </div>
+    <div class="feature">
+      <h4>360° smooth rotation</h4>
+      <p>Buttery smooth panoramic rotation for perfect sweeping shots, time lapses and dynamic video content.</p>
+    </div>
+    <div class="feature">
+      <h4>Universal compatibility</h4>
+      <p>Works with all smartphones, action cameras, DSLR and mirrorless cameras. One tripod for all your devices.</p>
+    </div>
+    <div class="feature">
+      <h4>Travel ready</h4>
+      <p>Compact folding design fits in any bag. Take your content creation anywhere — from studio to street.</p>
+    </div>
+    <div class="feature">
+      <h4>CE certified</h4>
+      <p>All Vlogstix products meet European safety and quality standards — CE, RoHS and ISO 9001 certified.</p>
+    </div>
+    <div class="feature">
+      <h4>1 year warranty</h4>
+      <p>Every Vlogstix product comes with a full 1 year manufacturer warranty. We stand behind our products completely.</p>
+    </div>
+  </div>
+</section>
+
+<section class="who" id="who">
+  <p class="section-label">Who we serve</p>
+  <h2 class="section-title">Made for every creator.</h2>
+  <p class="section-sub">Whether you're just starting out or a seasoned professional — Vlogstix has the perfect setup for you.</p>
+  <div class="who-grid">
+    <div class="who-card">
+      <div class="who-icon">🎬</div>
+      <h4>Vloggers</h4>
+      <p>Stable, smooth footage for daily vlogs and travel content.</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">📸</div>
+      <h4>Photographers</h4>
+      <p>Precision control for portraits, landscapes and long exposures.</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">📱</div>
+      <h4>Content creators</h4>
+      <p>Perfect for TikTok, Instagram Reels and YouTube content.</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">💼</div>
+      <h4>Business owners</h4>
+      <p>Professional product photography and video marketing.</p>
+    </div>
+    <div class="who-card">
+      <div class="who-icon">🎓</div>
+      <h4>Students</h4>
+      <p>Affordable quality for school projects and creative portfolios.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div>
+      <p class="section-label">Get in touch</p>
+      <h2 class="section-title">Ready to level up<br/>your content?</h2>
+      <p class="section-sub" style="margin-bottom:40px">Order your Vlogstix today or contact us for wholesale and business inquiries.</p>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <h5>Email us</h5>
+            <p>info@vlogstix.com</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div>
+            <h5>WhatsApp</h5>
+            <p>Contact us directly for fastest response</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div>
+            <h5>Based in</h5>
+            <p>Belgium 🇧🇪 — Shipping worldwide</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form">
+      <input type="text" placeholder="Your full name"/>
+      <input type="email" placeholder="Your email address"/>
+      <select>
+        <option value="" disabled selected>I am interested in...</option>
+        <option>Vlogstix Pro — Professional Tripod</option>
+        <option>Vlogstix Mini — Compact Tripod</option>
+        <option>Vlogstix Ring — Ring Light Set</option>
+        <option>Wholesale/Bulk order inquiry</option>
+        <option>Other</option>
+      </select>
+      <textarea placeholder="Tell us about your order or inquiry..."></textarea>
+      <button type="button">Send inquiry →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Vlog<span>stix</span></div>
+  <p class="footer-tagline">CAPTURE EVERY MOMENT</p>
+  <p class="footer-copy">© 2025 Vlogstix. All rights reserved. Belgium 🇧🇪</p>
+</footer>
+
+</body>
+</html>
